@@ -19,6 +19,16 @@ defmodule Blackjack.GameTest do
     assert [player] == Game.get_players(pid)
   end
 
+  test "get_deck", %{pid: pid} do
+    assert {"Spades", "A"} == List.first(Game.get_deck(pid))
+  end
+
+  test "shuffle_deck", %{pid: pid} do
+    deck = Game.get_deck(pid)
+    Game.shuffle_deck(pid)
+    assert deck != Game.get_deck(pid)
+  end
+
   test "deal", %{pid: pid} do
     assert [] == Game.get_players(pid)
     Game.add_player(pid, %Player{name: "first player"})

@@ -21,6 +21,13 @@ defmodule Blackjack.Game do
 	end
 
 	@doc """
+		Add player to game with given game `pid`.
+  """
+	def add_player(pid, player) do
+		GenServer.call(pid, {:add_player, player})
+	end
+
+	@doc """
 		Get current deck with given game `pid`.
 
 		Returns List of Tuple with {suit, rank}
@@ -30,10 +37,10 @@ defmodule Blackjack.Game do
 	end
 
 	@doc """
-		Add player to game with given game `pid`.
-  """
-	def add_player(pid, player) do
-		GenServer.call(pid, {:add_player, player})
+		Shuffle the deck for this game with given game `pid`
+	"""
+	def shuffle_deck(pid) do
+		GenServer.cast(pid, {:shuffle_deck})
 	end
 
 	@doc """
@@ -48,6 +55,18 @@ defmodule Blackjack.Game do
   """
 	def hit(pid, player) do
 		GenServer.call(pid, {:hit, player})
+	end
+
+	def start_game(pid) do
+		IO.puts "Node: #{inspect node}"
+		IO.puts "PID: #{inspect pid}"
+		:global.register_name(:dealer, pid)
+	end
+
+	def join_game(node, _pid) do
+		Node.connect(node)
+		dealer_pid = :global.whereis_name(:dealer)
+		send(dealer_pid, {:joined})
 	end
 
 	# Server Callbacks
@@ -66,10 +85,13 @@ defmodule Blackjack.Game do
   	{:reply, new_players, Map.put(state, :players, new_players)}
   end
 
+  def handle_cast({:shuffle_deck}, state) do
+  	Deck.shuffle(state.deck)
+  	{:noreply, state}
+  end
+
   def handle_call({:get_deck}, _from, state) do
-  	IO.puts "get_deck"
-		IO.inspect state
-		{:reply, "deck", state}
+		{:reply, Deck.get(state.deck), state}
   end
 
   def handle_call({:deal}, _from, state) do
