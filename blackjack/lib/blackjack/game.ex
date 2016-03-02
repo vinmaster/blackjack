@@ -5,7 +5,7 @@ defmodule Blackjack.Game do
 	# CLient API
 
 	@doc """
-		Starts the registry.
+		Starts the game process.
 	"""
 	def start_link() do
 		GenServer.start_link(__MODULE__, :ok, [])
@@ -60,12 +60,12 @@ defmodule Blackjack.Game do
 	def start_game(pid) do
 		IO.puts "Node: #{inspect node}"
 		IO.puts "PID: #{inspect pid}"
-		:global.register_name(:dealer, pid)
+		:global.register_name(:server, self)
 	end
 
 	def join_game(node, _pid) do
 		Node.connect(node)
-		dealer_pid = :global.whereis_name(:dealer)
+		dealer_pid = :global.whereis_name(:server)
 		send(dealer_pid, {:joined})
 	end
 
