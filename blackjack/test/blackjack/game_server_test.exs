@@ -9,24 +9,46 @@ defmodule Blackjack.GameServerTest do
     :ok
   end
 
-  test "get_rooms" do
-    assert %{} == GameServer.get_rooms
+  test "get_games" do
+    assert %{} == GameServer.get_games
   end
 
-  test "get_room_by_name" do
-    pid = GameServer.get_room_by_name("new")
-    assert pid != nil
-    game_pid = GameServer.get_rooms["new"]
-    assert game_pid != :ok
+  test "create_game" do
+    pid = GameServer.get_game_by_name("new")
+    assert pid == :error
+    pid = GameServer.create_game("new")
+    assert pid != :error
+    pid = GameServer.create_game("new")
+    assert pid == :error
   end
 
-  test "join_game" do
-    GameServer.join_game(node(), "new")
+  test "get_game_by_name" do
+    pid = GameServer.get_game_by_name("new")
+    assert pid == :error
+    GameServer.create_game("new")
+    new_pid = GameServer.get_game_by_name("new")
+    assert is_pid(new_pid)
+    assert new_pid != pid
+  end
+
+  test "join_server" do
+    GameServer.join_server(node())
+    # assert Node.list != []
   end
 
   test "register_player" do
+    GameServer.create_game("new")
     GameServer.register_player("new", "player")
-    game_pid = GameServer.get_room_by_name("new")
+    game_pid = GameServer.get_game_by_name("new")
     assert Game.get_players(game_pid) == ["player"]
+  end
+
+  test "handle when game shuts down" do
+    pid = GameServer.create_game("new")
+    assert pid == :ok
+    pid = GameServer.get_game_by_name("new")
+    assert is_pid(pid)
+    GenServer.stop(pid, :shutdown)
+    assert GameServer.get_game_by_name("new") == :error
   end
 end

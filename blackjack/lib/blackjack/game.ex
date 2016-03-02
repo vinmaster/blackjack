@@ -8,7 +8,7 @@ defmodule Blackjack.Game do
 		Starts the game process.
 	"""
 	def start_link() do
-		GenServer.start_link(__MODULE__, :ok, [])
+		GenServer.start(__MODULE__, :ok, [])
 	end
 
 	@doc """
