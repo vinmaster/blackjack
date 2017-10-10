@@ -36,11 +36,11 @@ defmodule Blackjack.GameServerTest do
     # assert Node.list != []
   end
 
-  test "register_player" do
+  test "add_player" do
     GameServer.create_game("new")
-    GameServer.register_player("new", "player")
+    GameServer.add_player("new", "player")
     game_pid = GameServer.get_game_by_name("new")
-    assert Game.get_players(game_pid) == ["player"]
+    assert Game.get_players(game_pid) == [%Player{cards: [], game_pid: game_pid, name: "player", node_id: :nonode@nohost}]
   end
 
   test "handle when game shuts down" do

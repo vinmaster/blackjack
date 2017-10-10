@@ -20,7 +20,7 @@ defmodule Blackjack.DeckTest do
   end
 
   test "shuffle", %{pid: pid} do
-    :random.seed(:erlang.unique_integer)
+    # :rand.seed(:exsplus)
     deck1 = Deck.get(pid)
     deck2 = Deck.shuffle(pid)
     deck3 = Deck.shuffle(pid)

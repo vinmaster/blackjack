@@ -1,20 +1,38 @@
 # Blackjack
+> Using Elixir 1.5.2
 
-**TODO: Add description**
+## Quick Start
 
-## Installation
+Running the program
+```elixir
+# To compile in REPL at anytime in debug mode
+recompile()
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+# Specify session name
+iex --sname player1
 
-  1. Add blackjack to your list of dependencies in `mix.exs`:
+# Specify name with machine IP and debug mode
+iex --name player1@192.168.1.1 --cookie key -S mix
+iex --name player2@192.168.1.2 --cookie key -S mix
 
-        def deps do
-          [{:blackjack, "~> 0.0.1"}]
-        end
+# Connect to machine
+Blackjack.GameServer.join_server(:"player2@192.168.1.2")
+# List nodes connected
+Node.list
+# Run code on other node
+greet = fn() -> IO.puts("Hello from #{inspect(Node.self)}") end
+Node.spawn(:"frank@127.0.0.1", greet)
 
-  2. Ensure blackjack is started before your application:
+# Start server
+{:ok, server_pid} = Blackjack.GameServer.start_link()
+Blackjack.GameServer.create_game("table")
+Blackjack.GameServer.add_player("table", "player1")
+dealer_pid = Blackjack.GameServer.get_game_by_name("table")
+Blackjack.GameServer.deal("table")
+Blackjack.GameServer.deal("hit")
+```
 
-        def application do
-          [applications: [:blackjack]]
-        end
-
+Run unit tests
+```
+iex -S mix test --trace
+```

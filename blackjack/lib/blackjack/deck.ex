@@ -5,7 +5,7 @@ defmodule Blackjack.Deck do
 
   # Start this Agent and storing the deck. Used for `new`.
   def start_link do
-    deck = new
+    deck = new()
     Agent.start_link(fn -> deck end)
   end
 
