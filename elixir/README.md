@@ -1,4 +1,4 @@
-# Blackjack
+# Blackjack (WIP)
 > Using Elixir 1.5.2
 
 ## Quick Start
