@@ -1,4 +1,4 @@
-(ns app.core
+(ns blackjack.core
   (:require [clojure.string :as str])
   (:gen-class))
 
